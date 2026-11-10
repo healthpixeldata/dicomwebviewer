@@ -41,7 +41,10 @@ function LoadingIndicatorProgress({ className, textBlock, progress }) {
         className
       )}
     >
-      <Icons.LoadingOHIFMark className="h-12 w-12 text-white" />
+      <Icons.LoadingOHIFMark className="text-foreground h-12 w-12" />
+      <div className="w-48">
+        <ProgressLoadingBar progress={progress} />
+      </div>
       {textBlock}
     </div>
   );

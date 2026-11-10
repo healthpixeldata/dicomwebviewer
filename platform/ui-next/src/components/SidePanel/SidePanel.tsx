@@ -58,7 +58,7 @@ const closeIconWidth = 30;
 const gridHorizontalPadding = 10;
 const tabSpacerWidth = 2;
 
-const baseClasses = 'bg-black border-black justify-start box-content flex flex-col';
+const baseClasses = 'bg-background border-background justify-start box-content flex flex-col';
 
 const openStateIconName = {
   left: 'SidePanelCloseLeft',
@@ -111,7 +111,7 @@ const getTabClassNames = (
   isActiveTab: boolean,
   isTabDisabled: boolean
 ) =>
-  classnames('h-[28px] mb-[2px] cursor-pointer text-white bg-black', {
+  classnames('h-[28px] mb-[2px] cursor-pointer text-foreground bg-primary/10 hover:bg-primary/20', {
     'hover:text-primary': !isActiveTab && !isTabDisabled,
     'rounded-l': tabIndex % numColumns === 0,
     'rounded-r': (tabIndex + 1) % numColumns === 0 || tabIndex === numTabs - 1,
@@ -125,7 +125,7 @@ const getTabStyle = (numTabs: number) => {
 
 const getTabIconClassNames = (numTabs: number, isActiveTab: boolean) => {
   return classnames('h-full w-full flex items-center justify-center', {
-    'bg-customblue-40': isActiveTab,
+    'bg-primary/20': isActiveTab,
     rounded: isActiveTab,
   });
 };
@@ -162,7 +162,9 @@ const getToolTipContent = (label: string, disabled: boolean) => {
   return (
     <>
       <div>{label}</div>
-      {disabled && <div className="text-white">{'Not available based on current context'}</div>}
+      {disabled && (
+        <div className="text-foreground">{'Not available based on current context'}</div>
+      )}
     </>
   );
 };
@@ -294,7 +296,7 @@ const SidePanel = ({
       <>
         <div
           className={classnames(
-            'bg-secondary-dark flex h-[28px] w-full cursor-pointer items-center rounded-md',
+            'bg-popover flex h-[28px] w-full cursor-pointer items-center rounded-md',
             side === 'left' ? 'justify-end pr-2' : 'justify-start pl-2'
           )}
           onClick={() => {
@@ -374,19 +376,16 @@ const SidePanel = ({
       <>
         {getCloseIcon()}
         <div className={classnames('flex grow justify-center')}>
-          <div className={classnames('bg-primary-dark text-primary flex flex-wrap')}>
+          <div className={classnames('bg-muted text-primary flex flex-wrap')}>
             {tabs.map((tab, tabIndex) => {
               const { disabled } = tab;
               return (
                 <React.Fragment key={tabIndex}>
                   {tabIndex % numCols !== 0 && (
                     <div
-                      className={classnames(
-                        'flex h-[28px] w-[2px] items-center bg-black',
-                        tabSpacerWidth
-                      )}
+                      className={classnames('flex h-[28px] w-[2px] items-center', tabSpacerWidth)}
                     >
-                      <div className="bg-primary-dark h-[20px] w-full"></div>
+                      <div className="bg-muted h-[20px] w-full"></div>
                     </div>
                   )}
                   <Tooltip key={tabIndex}>
@@ -449,24 +448,25 @@ const SidePanel = ({
     );
   };
 
- const getOpenStateComponent = () => {
-  if (className?.includes('bottom-panel')) {
-    return null;
-  }
-  
-  return (
-    <>
-      <div className="bg-bkg-med flex h-[40px] flex-shrink-0 select-none rounded-t p-2">
-        {tabs.length === 1 ? getOneTabComponent() : getTabGridComponent()}
-      </div>
-      <Separator
-        orientation="horizontal"
-        className="bg-black"
-        thickness="2px"
-      />
-    </>
-  );
-};
+  const getOpenStateComponent = () => {
+    // Innowave: bottom panels render their own header
+    if (className?.includes('bottom-panel')) {
+      return null;
+    }
+
+    return (
+      <>
+        <div className="bg-muted flex h-[40px] flex-shrink-0 select-none rounded-t p-2">
+          {tabs.length === 1 ? getOneTabComponent() : getTabGridComponent()}
+        </div>
+        <Separator
+          orientation="horizontal"
+          className="bg-background"
+          thickness="2px"
+        />
+      </>
+    );
+  };
 
   return (
     <div

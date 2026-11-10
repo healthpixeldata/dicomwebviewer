@@ -167,12 +167,21 @@ const getToolTipContent = (label: string, disabled: boolean) => {
   );
 };
 
+// const createBaseStyle = (expandedWidth: number) => {
+//   return {
+//     maxWidth: `${expandedWidth}px`,
+//     width: `${expandedWidth}px`,
+//     // To align the top of the side panel with the top of the viewport grid, use position relative and offset the
+//     // top by the same top offset as the viewport grid. Also adjust the height so that there is no overflow.
+//     position: 'relative',
+//     top: '0.2%',
+//     height: '99.8%',
+//   };
+// };
 const createBaseStyle = (expandedWidth: number) => {
   return {
-    maxWidth: `${expandedWidth}px`,
-    width: `${expandedWidth}px`,
-    // To align the top of the side panel with the top of the viewport grid, use position relative and offset the
-    // top by the same top offset as the viewport grid. Also adjust the height so that there is no overflow.
+    maxWidth: expandedWidth > 5000 ? '100%' : `${expandedWidth}px`,
+    width: expandedWidth > 5000 ? '100%' : `${expandedWidth}px`,
     position: 'relative',
     top: '0.2%',
     height: '99.8%',
@@ -440,20 +449,24 @@ const SidePanel = ({
     );
   };
 
-  const getOpenStateComponent = () => {
-    return (
-      <>
-        <div className="bg-bkg-med flex h-[40px] flex-shrink-0 select-none rounded-t p-2">
-          {tabs.length === 1 ? getOneTabComponent() : getTabGridComponent()}
-        </div>
-        <Separator
-          orientation="horizontal"
-          className="bg-black"
-          thickness="2px"
-        />
-      </>
-    );
-  };
+ const getOpenStateComponent = () => {
+  if (className?.includes('bottom-panel')) {
+    return null;
+  }
+  
+  return (
+    <>
+      <div className="bg-bkg-med flex h-[40px] flex-shrink-0 select-none rounded-t p-2">
+        {tabs.length === 1 ? getOneTabComponent() : getTabGridComponent()}
+      </div>
+      <Separator
+        orientation="horizontal"
+        className="bg-black"
+        thickness="2px"
+      />
+    </>
+  );
+};
 
   return (
     <div

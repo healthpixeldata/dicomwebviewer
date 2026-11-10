@@ -33,7 +33,7 @@ import MissingIcon from './Sources/MissingIcon';
 import More from './Sources/More';
 import MultiplePatients from './Sources/MultiplePatients';
 import NavigationPanelReveal from './Sources/NavigationPanelReveal';
-import OHIFLogo from './Sources/OHIFLogo';
+import InnowaveLogo from './Sources/InnowaveLogo';
 import Patient from './Sources/Patient';
 import Pin from './Sources/Pin';
 import PinFill from './Sources/PinFill';
@@ -505,7 +505,7 @@ export const Icons = {
   More,
   MultiplePatients,
   NavigationPanelReveal,
-  OHIFLogo,
+  InnowaveLogo,
   Patient,
   Pin,
   PinFill,

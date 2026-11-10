@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { IconProps } from '../types';
-
 export const ToolLayout = (props: IconProps) => (
   <svg
     width="28px"
@@ -3006,47 +3006,290 @@ export const ToolSegmentLabel = (props: IconProps) => (
   </svg>
 );
 
-export const ToolWindowLevel = (props: IconProps) => (
-  <svg
-    width="28px"
-    height="28px"
-    viewBox="0 0 28 28"
-    version="1.1"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
-    <g
-      id="tool-window-level"
-      stroke="none"
-      strokeWidth="1"
-      fill="none"
-      fillRule="evenodd"
-    >
-      <rect
-        id="Rectangle"
-        x="0"
-        y="0"
-        width="28"
-        height="28"
-      ></rect>
-      <circle
-        id="Oval-2"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        cx="14"
-        cy="14"
-        r="10"
-      ></circle>
-      <path
-        d="M21.4837076,7.36702528 C23.0493155,9.13213184 24,11.4550438 24,14 C24,19.5228475 19.5228475,24 14,24 C11.4550438,24 9.13213184,23.0493155 7.36702528,21.4837076 Z"
-        id="Combined-Shape"
-        fill="currentColor"
-      ></path>
-    </g>
-  </svg>
-);
+// export const ToolWindowLevel = (props: IconProps) => (
+//   <svg
+//     width="28px"
+//     height="28px"
+//     viewBox="0 0 28 28"
+//     version="1.1"
+//     xmlns="http://www.w3.org/2000/svg"
+//     {...props}
+//   >
+//     <g
+//       id="tool-window-level"
+//       stroke="none"
+//       strokeWidth="1"
+//       fill="none"
+//       fillRule="evenodd"
+//     >
+//       <rect
+//         id="Rectangle"
+//         x="0"
+//         y="0"
+//         width="28"
+//         height="28"
+//       ></rect>
+//       <circle
+//         id="Oval-2"
+//         stroke="currentColor"
+//         strokeWidth="1.5"
+//         strokeLinecap="round"
+//         strokeLinejoin="round"
+//         cx="14"
+//         cy="14"
+//         r="10"
+//       ></circle>
+//       <path
+//         d="M21.4837076,7.36702528 C23.0493155,9.13213184 24,11.4550438 24,14 C24,19.5228475 19.5228475,24 14,24 C11.4550438,24 9.13213184,23.0493155 7.36702528,21.4837076 Z"
+//         id="Combined-Shape"
+//         fill="currentColor"
+//       ></path>
+//     </g>
+//   </svg>
+// );
+
+export interface WindowLevelPreset {
+  name: string;
+  ww: number;
+  wl: number;
+}
+
+export const WINDOW_LEVEL_PRESETS: WindowLevelPreset[] = [
+  { name: 'Soft Tissue', ww: 400, wl: 40 },
+  { name: 'Lung', ww: 1500, wl: -600 },
+  { name: 'Liver', ww: 150, wl: 30 },
+  { name: 'Bone', ww: 1800, wl: 400 },
+  { name: 'Brain', ww: 80, wl: 40 },
+];
+
+declare global {
+  interface Window {
+    commandsManager?: any;
+  }
+}
+
+interface ToolWindowLevelProps extends IconProps {
+  onPresetSelect?: (preset: WindowLevelPreset) => void;
+  onDropdownStateChange?: (isOpen: boolean) => void;
+}
+
+export const ToolWindowLevel: React.FC<ToolWindowLevelProps> = ({
+  onPresetSelect,
+  onDropdownStateChange,
+  ...props
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  const iconRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (iconRef.current && !iconRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    onDropdownStateChange?.(isOpen);
+  }, [isOpen, onDropdownStateChange]);
+
+  useEffect(() => {
+    const styleId = 'window-level-scrollbar-styles';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.textContent = `
+        .window-level-dropdown::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .window-level-dropdown::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 3px;
+        }
+
+        .window-level-dropdown::-webkit-scrollbar-thumb {
+          background: rgba(90, 204, 230, 0.5);
+          border-radius: 3px;
+        }
+
+        .window-level-dropdown::-webkit-scrollbar-thumb:hover {
+          background: rgba(90, 204, 230, 0.7);
+        }
+
+        .window-level-dropdown {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(90, 204, 230, 0.5) rgba(255, 255, 255, 0.05);
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }, []);
+
+  const handlePresetClick = (preset: WindowLevelPreset) => {
+
+
+    if (window.commandsManager) {
+
+      try {
+        window.commandsManager.runCommand('setWindowLevelPresetFromDropdown', {
+          windowWidth: preset.ww,
+          windowCenter: preset.wl,
+        })
+      } catch (error) {
+      }
+    } else {
+      console.error('commandsManager NOT FOUND on window');
+    }
+    setIsOpen(false);
+  };
+
+  const toggleDropdown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (!isOpen && iconRef.current) {
+      const rect = iconRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + 4,
+        left: rect.left
+      });
+    }
+
+    setIsOpen(!isOpen);
+  };
+
+  return (
+    <>
+      <div
+        ref={iconRef}
+        style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}
+      >
+        <svg
+          width="28px"
+          height="28px"
+          viewBox="0 0 28 28"
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{ cursor: 'pointer' }}
+        >
+          <g
+            id="tool-window-level"
+            stroke="none"
+            strokeWidth="1"
+            fill="none"
+            fillRule="evenodd"
+          >
+            <rect
+              id="Rectangle"
+              x="0"
+              y="0"
+              width="28"
+              height="28"
+            ></rect>
+            <circle
+              id="Oval-2"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              cx="14"
+              cy="14"
+              r="10"
+            ></circle>
+            <path
+              d="M21.4837076,7.36702528 C23.0493155,9.13213184 24,11.4550438 24,14 C24,19.5228475 19.5228475,24 14,24 C11.4550438,24 9.13213184,23.0493155 7.36702528,21.4837076 Z"
+              id="Combined-Shape"
+              fill="currentColor"
+            ></path>
+          </g>
+        </svg>
+
+        <svg
+          width="12px"
+          height="12px"
+          viewBox="0 0 12 12"
+          onClick={toggleDropdown}
+          style={{
+            cursor: 'pointer',
+            marginLeft: '2px',
+            transition: 'transform 0.2s',
+            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+          }}
+        >
+          <path
+            d="M6 8L2 4h8z"
+            fill="currentColor"
+          />
+        </svg>
+      </div>
+
+      {isOpen && createPortal(
+        <div
+          className="window-level-dropdown"
+          style={{
+            position: 'fixed',
+            top: `${dropdownPosition.top}px`,
+            left: `${dropdownPosition.left}px`,
+            backgroundColor: '#1e3a5f',
+            border: '1px solid rgba(90, 204, 230, 0.3)',
+            borderRadius: '4px',
+            minWidth: '180px',
+            maxHeight: '300px',
+            overflowY: 'auto',
+            zIndex: 99999,
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)',
+            padding: '4px 0',
+          }}
+        >
+          {WINDOW_LEVEL_PRESETS.map((preset, index) => (
+            <div
+              key={preset.name}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handlePresetClick(preset);
+              }}
+              style={{
+                padding: '8px 16px',
+                cursor: 'pointer',
+                color: '#e0e0e0',
+                fontSize: '13px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                transition: 'background-color 0.15s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(90, 204, 230, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
+              <span style={{ fontWeight: '500' }}>{preset.name}</span>
+              <span style={{ fontSize: '11px', color: '#999', marginLeft: '12px' }}>
+                {preset.ww} / {preset.wl}
+              </span>
+              <span style={{ fontSize: '11px', color: '#666', marginLeft: '8px' }}>
+                {index + 1}
+              </span>
+            </div>
+          ))}
+        </div>,
+        document.body
+      )}
+    </>
+  );
+};
 
 export const ToolWindowRegion = (props: IconProps) => (
   <svg

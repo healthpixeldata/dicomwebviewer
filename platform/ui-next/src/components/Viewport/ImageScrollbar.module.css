@@ -11,15 +11,15 @@
 .scrollbarInner {
   position: relative;
   height: 100%;
-  width: 11px;
+  width: 18px;
 }
 
 /* Apply these styles to any range input inside our component */
 .scrollbarInput {
   position: absolute;
-  left: 12px;
+  left: 18px;
   top: 0;
-  height: 12px;
+  height: 18px;
   transform: rotate(90deg);
   transform-origin: top left;
   -webkit-appearance: none;
@@ -56,7 +56,7 @@ input[type='range'].scrollbarInput::-moz-range-thumb {
   border: none;
   border-radius: 57px;
   cursor: -moz-grab;
-  height: 12px;
+  height: 18px;
   width: 39px;
 }
 

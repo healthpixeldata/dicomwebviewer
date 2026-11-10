@@ -553,6 +553,17 @@ export default function getToolbarModule({ servicesManager, extensionManager }: 
         };
       },
     },
+    {
+  name: 'evaluate.not.isMobile',
+  evaluate: () => {
+    const isMobile = window.innerWidth <= 768;
+    return {
+      disabled: isMobile,
+      className: isMobile ? 'ohif-hidden' : '',
+      hideWhenDisabled: true,
+    };
+  },
+},
   ];
 }
 

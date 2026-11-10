@@ -1,12 +1,12 @@
 <!-- prettier-ignore-start -->
 <div align="center">
-  <h1>OHIF Medical Imaging Viewer</h1>
-  <p><strong>The OHIF Viewer</strong> is a zero-footprint medical image viewer
-provided by the <a href="https://ohif.org/">Open Health Imaging Foundation (OHIF)</a>. It is a configurable and extensible progressive web application with out-of-the-box support for image archives which support <a href="https://www.dicomstandard.org/using/dicomweb/">DICOMweb</a>.</p>
+  <h1>Innowave Viewer</h1>
+  <!-- <p><strong>The OHIF Viewer</strong> is a zero-footprint medical image viewer
+provided by the <a href="https://ohif.org/">Open Health Imaging Foundation (OHIF)</a>. It is a configurable and extensible progressive web application with out-of-the-box support for image archives which support <a href="https://www.dicomstandard.org/using/dicomweb/">DICOMweb</a>.</p> -->
 </div>
 
 
-<div align="center">
+<!-- <div align="center">
   <a href="https://docs.ohif.org/"><strong>Read The Docs</strong></a>
 </div>
 <div align="center">
@@ -337,7 +337,7 @@ MIT © [OHIF](https://github.com/OHIF)
 [extension-dicom-pdf]: extensions/dicom-pdf/README.md
 [pdf-npm]: https://www.npmjs.com/package/@ohif/extension-dicom-pdf
 [extension-vtk]: extensions/vtk/README.md
-[vtk-npm]: https://www.npmjs.com/package/@ohif/extension-vtk
+[vtk-npm]: https://www.npmjs.com/package/@ohif/extension-vtk -->
 <!-- prettier-ignore-end -->
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FOHIF%2FViewers.svg?type=large&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2FOHIF%2FViewers?ref=badge_large&issueType=license)

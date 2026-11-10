@@ -215,6 +215,7 @@ export const toolbarSections = {
     'Pan',
     'TrackballRotate',
     'WindowLevel',
+    'Cine',
     'Capture',
     'Layout',
     'Crosshairs',
@@ -263,7 +264,6 @@ export const toolbarSections = {
     'StackScroll',
     'invert',
     'Probe',
-    'Cine',
     'Angle',
     'CobbAngle',
     'Magnify',
@@ -281,6 +281,7 @@ export const basicLayout = {
   props: {
     leftPanels: [ohif.thumbnailList],
     leftPanelResizable: true,
+     leftPanelInitialExpandedWidth:90,
     rightPanels: [cornerstone.segmentation, cornerstone.measurements],
     rightPanelClosed: true,
     rightPanelResizable: true,

@@ -74,9 +74,20 @@ export default async function init({
   const statsOverlay =
     new URLSearchParams(window.location.search).get('debug') === 'true';
 
+  // Innowave: iOS Safari cannot linearly filter 32-bit float 3D textures, so MPR / 3D
+  // volumes render black on iPhone and iPad. `preferSizeOverAccuracy` makes cornerstone
+  // use half-float textures instead, which also halves GPU memory and upload time.
+  // Auto-enabled on Apple touch devices; set `preferSizeOverAccuracy: true` in app-config.js
+  // to use it on slow desktop GPUs too, or `false` to force full float precision.
+  const isAppleTouchDevice =
+    /iPad|iPhone|iPod/.test(navigator.platform) ||
+    (navigator.maxTouchPoints > 2 && navigator.platform.includes('MacIntel'));
+  const preferSizeOverAccuracy = appConfig.preferSizeOverAccuracy ?? isAppleTouchDevice;
+
   await cs3DInit({
     peerImport: appConfig.peerImport,
     debug: { statsOverlay },
+    rendering: { preferSizeOverAccuracy },
   });
 
   cornerstone.setUseCPURendering(Boolean(appConfig.useCPURendering));

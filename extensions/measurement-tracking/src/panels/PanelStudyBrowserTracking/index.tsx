@@ -24,7 +24,11 @@ function WrappedPanelStudyBrowserTracking() {
   const dataSource = extensionManager.getActiveDataSource()[0];
 
   const getStudiesForPatientByMRN = _getStudyForPatientUtility(extensionManager);
-  const _getStudiesForPatientByMRN = getStudiesForPatientByMRN.bind(null, dataSource);
+  // Innowave: `loadPriorStudies: false` in app-config.js shows only the opened study.
+  const _getStudiesForPatientByMRN =
+    extensionManager.appConfig?.loadPriorStudies === false
+      ? async currentStudies => currentStudies
+      : getStudiesForPatientByMRN.bind(null, dataSource);
   // Plain call: the React Compiler caches this keyed on extensionManager (a
   // stable service), so it runs once and keeps a stable identity — what the
   // old useCallback(fn(), []) wanted, but analyzable and correctly keyed.

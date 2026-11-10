@@ -19,8 +19,11 @@ export default {
       },
       contentF: ({ referenceInstance }) => referenceInstance.SeriesDescription,
     },
+    { id: 'InnowavePatientInfo', inheritsFrom: 'innowave.patientInfo', corner: 'topLeft' },
   ],
-  'viewportOverlay.topRight': [],
+  'viewportOverlay.topRight': [
+    { id: 'InnowavePatientInfo', inheritsFrom: 'innowave.patientInfo', corner: 'topRight' },
+  ],
   'viewportOverlay.bottomLeft': [
     {
       id: 'WindowLevel',
@@ -35,6 +38,7 @@ export default {
         return activeToolName === 'Zoom';
       },
     },
+    { id: 'InnowavePatientInfo', inheritsFrom: 'innowave.patientInfo', corner: 'bottomLeft' },
   ],
   'viewportOverlay.bottomRight': [
     {
@@ -42,5 +46,6 @@ export default {
       inheritsFrom: 'ohif.overlayItem.instanceNumber',
       title: 'Instance Number',
     },
+    { id: 'InnowavePatientInfo', inheritsFrom: 'innowave.patientInfo', corner: 'bottomRight' },
   ],
 };

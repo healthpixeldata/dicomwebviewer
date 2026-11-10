@@ -54,8 +54,10 @@ window.config = {
   },
   // ----------------------------------------------------------------------------
   showStudyList: true,
-  // some windows systems have issues with more than 3 web workers
-  maxNumberOfWebWorkers: 3,
+  // Image decoding (JPEG 2000 / JPEG-LS / RLE) runs in web workers; MPR and 3D need every slice
+  // decoded, so more workers = faster volume loading. The real count is capped at
+  // (CPU cores - 1). Lower this to 3 if a specific Windows machine has trouble.
+  maxNumberOfWebWorkers: 8,
   // below flag is for performance reasons, but it might not work for all servers
   showWarningMessageForCrossOrigin: true,
   showCPUFallbackMessage: true,
@@ -69,13 +71,54 @@ window.config = {
     thumbnail: 5,
     // Prefetch number is dependent on the http protocol. For http 2 or
     // above, the number of requests can be go a lot higher.
-    prefetch: 25,
+    // MPR / 3D volume loading uses the prefetch pool. Raise it (e.g. 50-100) when the server or
+    // reverse proxy speaks HTTP/2; keep ~25 on plain HTTP/1.1 (browsers cap at 6 connections).
+    prefetch: 50,
+  },
+
+  // ===========================================================================
+  // Innowave options
+  // ===========================================================================
+
+  // false = show ONLY the opened study: no prior studies of the same patient are queried
+  // or listed in the study browser. true (default) = list the patient's other studies.
+  loadPriorStudies: true,
+
+  // MPR / 3D crash recovery. 'reload' (default) swallows the VTK/WebGL "context lost" error and
+  // reloads the page once to restore the GPU; 'off' disables it.
+  webglRecovery: 'reload',
+
+  // GPU memory for MPR / 3D: true = half-float 3D textures (half the memory, faster upload,
+  // slightly less precision above ~2048 HU). Left undefined it is ON automatically for
+  // iPhone/iPad (required there for MPR to render) and OFF elsewhere. Try true on slow GPUs.
+  // preferSizeOverAccuracy: true,
+
+  // Text shown over each image. Any DICOM keyword works (tag), several can be combined with a
+  // template. Lines whose value is missing are skipped. Remove/add items freely.
+  //   position: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight'
+  //   format:   'name' (FAMILY^GIVEN -> "FAMILY GIVEN") | 'date' (20250131 -> 2025-01-31)
+  patientOverlay: {
+    enabled: true,
+    position: 'topLeft',
+    fontSize: '14px',
+    items: [
+      { label: 'PN:', tag: 'PatientName', format: 'name' },
+      // Combined line, like the old viewer's "AMIT SAINI 31/M (M)":
+      // { template: 'PN: {PatientName} {PatientAge}/{PatientSex} ({PatientSex})' },
+      { label: 'Age:', tag: 'PatientAge' },
+      { label: 'PID:', tag: 'PatientID' },
+      { label: 'Accession:', tag: 'AccessionNumber' },
+      { label: 'DOB:', tag: 'PatientBirthDate', format: 'date' },
+      // { label: 'Sex:', tag: 'PatientSex' },
+      // { label: 'Referring:', tag: 'ReferringPhysicianName', format: 'name' },
+      // { template: '{StudyDescription} [{Modality}]' },
+    ],
   },
   showErrorDetails: 'always', // 'always', 'dev', 'production'
   // `dangerouslyUseDynamicConfig` (load configuration from a `configUrl` query
   // parameter) is intentionally left OFF in the secure default build. See
   // config/dev.js for the documented shape.
-  defaultDataSourceName: 'ohif',
+  defaultDataSourceName: 'orthanc', // the dcm4chee-arc server below (name kept for existing URLs)
   dataSources: [
     {
       // Read-only public demo server. Replace with your own DICOMweb server.
@@ -107,6 +150,35 @@ window.config = {
           transform: url => url.replace('/pixeldata.mp4', '/rendered'),
         },
         omitQuotationForMultipartRequest: true,
+      },
+    },
+
+    {
+      // dcm4chee-arc (Innowave / Freedom PACS). Edit the host and AE title for your server.
+      namespace: '@ohif/extension-default.dataSourcesModule.dicomweb',
+      sourceName: 'orthanc',
+      configuration: {
+        friendlyName: 'dcm4chee-arc',
+        name: 'DCM4CHEE',
+        wadoUriRoot: 'https://freedomnano.ddns.net:8443/dcm4chee-arc/aets/FREEDOM/wado',
+        qidoRoot: 'https://freedomnano.ddns.net:8443/dcm4chee-arc/aets/FREEDOM/rs',
+        wadoRoot: 'https://freedomnano.ddns.net:8443/dcm4chee-arc/aets/FREEDOM/rs',
+        qidoSupportsIncludeField: true,
+        supportsReject: true,
+        dicomUploadEnabled: true,
+        imageRendering: 'wadors',
+        thumbnailRendering: 'wadors',
+        enableStudyLazyLoad: true,
+        supportsFuzzyMatching: false,
+        supportsWildcard: false,
+        omitQuotationForMultipartRequest: true,
+        bulkDataURI: { enabled: true },
+
+        // MPR / 3D speed trade-off. By default the server sends each image in its stored
+        // compression (e.g. JPEG 2000) and the browser decodes it. On a fast LAN you can ask the
+        // server to send uncompressed pixels instead, which removes the decoding cost entirely:
+        // requestTransferSyntaxUID: '1.2.840.10008.1.2.1', // Explicit VR Little Endian
+        // (dcm4chee then transcodes on the fly: faster viewer, more server CPU and bandwidth.)
       },
     },
 

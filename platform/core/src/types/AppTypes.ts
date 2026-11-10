@@ -209,6 +209,23 @@ declare global {
       };
       useCursors?: boolean;
       maxCacheSize?: number;
+      /** Innowave: false = show only the opened study (no prior studies of the same patient). Default true. */
+      loadPriorStudies?: boolean;
+      /** Innowave: 'reload' (default) restores the page after a WebGL context failure; 'off' disables it. */
+      webglRecovery?: 'reload' | 'off';
+      /** Innowave: configurable patient/study text on the viewport overlay (see viewportOverlayCustomization). */
+      patientOverlay?: {
+        enabled?: boolean;
+        position?: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
+        fontSize?: string;
+        color?: string;
+        items?: Array<{
+          label?: string;
+          tag?: string;
+          template?: string;
+          format?: 'name' | 'date';
+        }>;
+      };
       max3DTextureSize?: number;
       showWarningMessageForCrossOrigin?: boolean;
       showCPUFallbackMessage?: boolean;

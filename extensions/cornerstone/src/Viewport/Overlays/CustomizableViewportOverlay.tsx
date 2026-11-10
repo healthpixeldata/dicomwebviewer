@@ -17,6 +17,7 @@ import { StackViewportData, VolumeViewportData } from '../../types/CornerstoneCa
 import { getViewportAdapter } from '../../services/ViewportService/adapter';
 import { getViewportDataShapeType } from '../../utils/viewportDataShape';
 
+import { PatientInfoOverlayItem } from './patientOverlay';
 import './CustomizableViewportOverlay.css';
 import { useViewportRendering } from '../../hooks';
 
@@ -54,6 +55,7 @@ const OverlayItemComponents = {
   'ohif.overlayItem.windowLevel': VOIOverlayItem,
   'ohif.overlayItem.zoomLevel': ZoomOverlayItem,
   'ohif.overlayItem.instanceNumber': InstanceNumberOverlayItem,
+  'innowave.patientInfo': PatientInfoOverlayItem,
 };
 
 /**

@@ -5,7 +5,6 @@ All options go in `platform/app/public/config/default.js` (or your deployed `app
 | Option | Default | Purpose |
 |---|---|---|
 | `loadPriorStudies` | `true` | `false` = only the opened study is listed; prior studies of the same patient are not queried. |
-| `autoPetCtFusion` | `false` | Studies with both PT and CT opened at `/viewer` switch to the PET/CT fusion (TMTV) mode when set to `true`. |
 | `patientOverlay` | enabled, top-left | Patient text on the image. `items` = `{label, tag}` or `{label, template}` (e.g. `'{PatientName} {PatientAge}/{PatientSex}'`). `format: 'name'` / `'date'` optional. Add any DICOM keyword you want. |
 | `webglRecovery` | `'reload'` | Reloads once (max 2 per 30 s) after a WebGL context loss; `'off'` disables. |
 | `preferSizeOverAccuracy` | auto on iPhone/iPad | Half-float textures: fixes black MPR on iOS and halves GPU memory. Set `true` to force it on every device (faster MPR on weak GPUs). |

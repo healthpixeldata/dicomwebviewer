@@ -21,4 +21,4 @@ All options go in `platform/app/public/config/default.js` (or your deployed `app
 Header settings (gear) → **Show / hide overlay**. Works on every screen size; on phones in landscape use the small **Overlay** button (top-right). The choice is remembered per browser.
 
 ## PET/CT fusion thumbnail
-For PET/CT studies a **Fusion: <CT> + <PT>** thumbnail is added to the series list in the normal viewer (same URL, same mode). Double-click it (phones: tap) to show the PET fused on the CT in axial/sagittal/coronal views. The CT with the most slices that shares the PET's frame of reference is used. Turn off with `fusionThumbnails: false`.
+For PET/CT studies a **Fusion: <CT> + <PT>** thumbnail is added to the series list in the normal viewer (same URL, same mode). Double-click it (phones: tap) to show the PET fused on the CT in axial/sagittal/coronal views. One thumbnail per CT and PET combination, like the streaming viewer. Turn off with `fusionThumbnails: false`.

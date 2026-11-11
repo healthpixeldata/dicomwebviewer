@@ -3,8 +3,7 @@ import { classes } from '@ohif/core';
 /**
  * Innowave: "Fusion" series thumbnails for PET/CT studies.
  *
- * For every reconstructable PT series that shares a FrameOfReferenceUID with a
- * reconstructable CT series, a synthetic thumbnail is appended to the study's
+ * For every reconstructable PT series x every reconstructable CT series, a synthetic thumbnail is appended to the study's
  * series list. Double-clicking it applies a hanging protocol (built on the fly,
  * bound to exactly that CT + PT pair) showing PET fused on CT in axial,
  * sagittal and coronal views. The URL and the current mode do not change.
@@ -26,24 +25,23 @@ function findPairs(studyEntries: any[], displaySetService) {
     .filter(x => x.ds && !x.ds.unsupported);
 
   const cts = resolved.filter(
-    x => x.ds.Modality === 'CT' && x.ds.isReconstructable && x.ds.FrameOfReferenceUID
+    x => x.ds.Modality === 'CT' && x.ds.isReconstructable
   );
   const pts = resolved.filter(
     x =>
       x.ds.Modality === 'PT' &&
       x.ds.isReconstructable &&
-      x.ds.FrameOfReferenceUID &&
       !/^fusion/i.test(x.ds.SeriesDescription || '')
   );
 
-  // Every CT x PT combination that shares a frame of reference (like the scanner's
-  // own "Fusion: <CT> / <PT>" series), ordered by CT series number then PT.
+  // Every PT x CT combination, like the streaming viewer's auto-generated
+  // "Fusion: <CT> / <PT>" series: all CTs for the first PET, then all CTs for the next.
+  // The volumes are placed by their patient coordinates, so the frame-of-reference
+  // UID is not required to match.
   const bySeries = (a, b) => (Number(a.ds.SeriesNumber) || 0) - (Number(b.ds.SeriesNumber) || 0);
-  [...cts].sort(bySeries).forEach(ct => {
-    [...pts].sort(bySeries).forEach(pt => {
-      if (ct.ds.FrameOfReferenceUID === pt.ds.FrameOfReferenceUID) {
-        pairs.push({ ct, pt });
-      }
+  [...pts].sort(bySeries).forEach(pt => {
+    [...cts].sort(bySeries).forEach(ct => {
+      pairs.push({ ct, pt });
     });
   });
   return pairs;

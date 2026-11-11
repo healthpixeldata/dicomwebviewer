@@ -182,6 +182,43 @@ export const defaultActivatePanelTriggers = [
   },
 ];
 
+/**
+ * Innowave: when a study containing both PT and CT series is opened in the plain
+ * `/viewer` route, switch to the PET/CT fusion (TMTV) mode automatically.
+ * Disable with `autoPetCtFusion: false` in the app config, or `&fusion=off` in the URL.
+ */
+function setupAutoPetCtFusion(servicesManager, extensionManager): Array<() => void> {
+  const { displaySetService } = servicesManager.services;
+  const enabled = (extensionManager as any).appConfig?.autoPetCtFusion !== false;
+  const path = window.location.pathname;
+  const params = new URLSearchParams(window.location.search);
+  if (!enabled || params.get('fusion') === 'off' || !/\/viewer\/?$/.test(path)) {
+    return [];
+  }
+
+  let redirected = false;
+  const check = () => {
+    if (redirected) {
+      return;
+    }
+    const modalities = new Set(
+      displaySetService.getActiveDisplaySets().map(ds => ds.Modality)
+    );
+    if (modalities.has('PT') && modalities.has('CT')) {
+      redirected = true;
+      const target = path.replace(/\/viewer\/?$/, '/tmtv');
+      window.location.replace(`${target}${window.location.search}${window.location.hash}`);
+    }
+  };
+
+  check();
+  const { unsubscribe } = displaySetService.subscribe(
+    displaySetService.EVENTS.DISPLAY_SETS_ADDED,
+    check
+  );
+  return [unsubscribe];
+}
+
 export function onModeEnter({ servicesManager, extensionManager, commandsManager }: withAppTypes) {
   const { measurementService, toolbarService, toolGroupService, customizationService } =
     servicesManager.services;
@@ -230,6 +267,8 @@ export function onModeEnter({ servicesManager, extensionManager, commandsManager
   this._unsubscriptions.push(
     ...addActivatePanelTriggers({ servicesManager }, this.activatePanelTriggers)
   );
+
+  this._unsubscriptions.push(...setupAutoPetCtFusion(servicesManager, extensionManager));
 }
 
 export function onModeExit({ servicesManager }: withAppTypes) {

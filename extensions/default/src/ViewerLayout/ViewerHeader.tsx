@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Header, useModal } from '@ohif/ui-next';
 import { useSystem } from '@ohif/core';
 import { Toolbar } from '../Toolbar/Toolbar';
+import HeaderUndoRedo from './HeaderUndoRedo';
 import { preserveQueryParameters } from '@ohif/app';
 import { Types } from '@ohif/core';
 
@@ -109,10 +110,16 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
       onClickReturnButton={onClickReturnButton}
       WhiteLabeling={appConfig.whiteLabeling}
       Secondary={<Toolbar buttonSection="secondary" />}
-      RightSide={rightSideItems.map((Item, index) => (
-        // The list is static per configuration, so the index is a stable key.
-        <Item key={index} />
-      ))}
+      ToolbarRight={rightSideItems
+        .filter(Item => Item === HeaderUndoRedo)
+        .map((Item, index) => (
+          <Item key={index} />
+        ))}
+      RightSide={rightSideItems
+        .filter(Item => Item !== HeaderUndoRedo)
+        .map((Item, index) => (
+          <Item key={index} />
+        ))}
     >
       <div className="relative flex justify-center gap-[4px]">
         <Toolbar buttonSection="primary" />

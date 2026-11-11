@@ -185,11 +185,11 @@ export const defaultActivatePanelTriggers = [
 /**
  * Innowave: when a study containing both PT and CT series is opened in the plain
  * `/viewer` route, switch to the PET/CT fusion (TMTV) mode automatically.
- * Disable with `autoPetCtFusion: false` in the app config, or `&fusion=off` in the URL.
+ * Opt-in: set `autoPetCtFusion: true` in the app config. Off by default.
  */
 function setupAutoPetCtFusion(servicesManager, extensionManager): Array<() => void> {
   const { displaySetService } = servicesManager.services;
-  const enabled = (extensionManager as any).appConfig?.autoPetCtFusion !== false;
+  const enabled = (extensionManager as any).appConfig?.autoPetCtFusion === true;
   const path = window.location.pathname;
   const params = new URLSearchParams(window.location.search);
   if (!enabled || params.get('fusion') === 'off' || !/\/viewer\/?$/.test(path)) {

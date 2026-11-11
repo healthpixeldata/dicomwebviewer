@@ -84,8 +84,8 @@ window.config = {
   // or listed in the study browser. true (default) = list the patient's other studies.
   loadPriorStudies: true,
   // Open studies that contain both PT and CT in the PET/CT fusion mode automatically.
-  // Set false to always use the plain viewer; or add &fusion=off to a URL.
-  autoPetCtFusion: true,
+  // Off by default so every study opens in the normal viewer.
+  autoPetCtFusion: false,
 
   // MPR / 3D crash recovery. 'reload' (default) swallows the VTK/WebGL "context lost" error and
   // reloads the page once to restore the GPU; 'off' disables it.

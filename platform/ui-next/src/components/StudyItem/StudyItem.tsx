@@ -22,7 +22,24 @@ const StudyItem = ({
   ThumbnailMenuItems,
   StudyMenuItems,
   StudyInstanceUID,
+  isMobile = false,
 }: withAppTypes) => {
+  // Innowave: on phones skip the accordion and show only the series strip.
+  if (isMobile) {
+    return (
+      <ThumbnailList
+        thumbnails={displaySets}
+        activeDisplaySetInstanceUIDs={activeDisplaySetInstanceUIDs}
+        onThumbnailClick={onClickThumbnail}
+        onThumbnailDoubleClick={onDoubleClickThumbnail}
+        onClickUntrack={onClickUntrack}
+        viewPreset="thumbnails"
+        ThumbnailMenuItems={ThumbnailMenuItems}
+        isMobile
+      />
+    );
+  }
+
   return (
     <Accordion
       type="single"

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { StudyItem } from '../StudyItem';
 import { StudyBrowserSort } from '../StudyBrowserSort';
@@ -23,6 +23,15 @@ const StudyBrowser = ({
   ThumbnailMenuItems,
   StudyMenuItems,
 }: withAppTypes) => {
+  // Innowave: phones/tablets in portrait get a horizontal, swipeable series strip.
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const getTabContent = () => {
     const tabData = tabs.find(tab => tab.name === activeTabName);
     const viewPreset = viewPresets
@@ -51,12 +60,21 @@ const StudyBrowser = ({
               ThumbnailMenuItems={ThumbnailMenuItems}
               StudyMenuItems={StudyMenuItems}
               StudyInstanceUID={studyInstanceUid}
+              isMobile={isMobile}
             />
           </React.Fragment>
         );
       }
     );
   };
+
+  if (isMobile) {
+    return (
+      <div className="bg-background flex h-full w-full overflow-x-auto overflow-y-hidden p-[6px]">
+        <div className="flex flex-row gap-[6px]">{getTabContent()}</div>
+      </div>
+    );
+  }
 
   return (
     <ScrollArea>

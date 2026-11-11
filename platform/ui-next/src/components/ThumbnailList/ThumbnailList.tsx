@@ -11,6 +11,7 @@ const ThumbnailList = ({
   activeDisplaySetInstanceUIDs = [],
   viewPreset,
   ThumbnailMenuItems,
+  isMobile = false,
 }) => {
   // Use the dynamic height hook on the parent container
   const { ref, maxHeight } = useDynamicMaxHeight(thumbnails);
@@ -23,6 +24,38 @@ const ThumbnailList = ({
   const thumbnailItems = thumbnails?.filter(
     ({ componentType }) => componentType !== 'thumbnailNoImage' && viewPreset === 'thumbnails'
   );
+
+  // Innowave: single horizontal row on phones, slightly smaller cards, swipe to browse.
+  if (isMobile) {
+    return (
+      <div className="flex flex-row gap-[6px]">
+        {thumbnailItems.map(item => {
+          const { displaySetInstanceUID, componentType, numInstances, ...rest } = item;
+          const isActive = activeDisplaySetInstanceUIDs.includes(displaySetInstanceUID);
+          return (
+            <div
+              key={displaySetInstanceUID}
+              className="flex-shrink-0"
+              style={{ zoom: 0.8 }}
+            >
+              <Thumbnail
+                {...rest}
+                displaySetInstanceUID={displaySetInstanceUID}
+                numInstances={numInstances || 1}
+                isActive={isActive}
+                thumbnailType={componentType}
+                viewPreset="thumbnails"
+                onClick={onThumbnailClick.bind(null, displaySetInstanceUID)}
+                onDoubleClick={onThumbnailDoubleClick.bind(null, displaySetInstanceUID)}
+                onClickUntrack={onClickUntrack.bind(null, displaySetInstanceUID)}
+                ThumbnailMenuItems={ThumbnailMenuItems}
+              />
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col">

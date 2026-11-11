@@ -688,8 +688,10 @@ export default class HangingProtocolService extends PubSubService {
     // no support for drag and drop into fusion viewports yet
     // Todo: smart drag and drop would look at the displaySets and
     // replace the same modality type, but later
+    // Innowave: instead of rejecting, let the dropped/double-clicked series simply
+    // replace what the fusion viewport shows, so users can swap series freely.
     if (protocolViewport.displaySets.length > 1) {
-      throw new Error('Cannot update viewport with multiple displaySets yet');
+      return defaultReturn;
     }
 
     // If there is no displaySet, then we can assume that the viewport

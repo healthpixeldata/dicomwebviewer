@@ -36,18 +36,15 @@ function findPairs(studyEntries: any[], displaySetService) {
       !/^fusion/i.test(x.ds.SeriesDescription || '')
   );
 
-  pts.forEach(pt => {
-    const candidates = cts.filter(ct => ct.ds.FrameOfReferenceUID === pt.ds.FrameOfReferenceUID);
-    if (!candidates.length) {
-      return;
-    }
-    // Prefer the CT with the most slices (usually the whole-body CT).
-    candidates.sort(
-      (a, b) =>
-        (b.ds.numImageFrames ?? b.ds.instances?.length ?? 0) -
-        (a.ds.numImageFrames ?? a.ds.instances?.length ?? 0)
-    );
-    pairs.push({ ct: candidates[0], pt });
+  // Every CT x PT combination that shares a frame of reference (like the scanner's
+  // own "Fusion: <CT> / <PT>" series), ordered by CT series number then PT.
+  const bySeries = (a, b) => (Number(a.ds.SeriesNumber) || 0) - (Number(b.ds.SeriesNumber) || 0);
+  [...cts].sort(bySeries).forEach(ct => {
+    [...pts].sort(bySeries).forEach(pt => {
+      if (ct.ds.FrameOfReferenceUID === pt.ds.FrameOfReferenceUID) {
+        pairs.push({ ct, pt });
+      }
+    });
   });
   return pairs;
 }
@@ -64,7 +61,7 @@ export function appendFusionThumbnails(tabs, displaySetService) {
         }
         const extra = pairs.map(({ ct, pt }) => ({
           displaySetInstanceUID: `${FUSION_PREFIX}:${ct.ds.displaySetInstanceUID}:${pt.ds.displaySetInstanceUID}`,
-          description: `Fusion: ${ct.ds.SeriesDescription || 'CT'} + ${pt.ds.SeriesDescription || 'PT'}`,
+          description: `Fusion: ${ct.ds.SeriesNumber ?? ''} - ${ct.ds.SeriesDescription || 'CT'} / ${pt.ds.SeriesNumber ?? ''} - ${pt.ds.SeriesDescription || 'PT'}`,
           seriesNumber: 'F',
           modality: 'PT/CT',
           seriesDate: pt.entry.seriesDate,

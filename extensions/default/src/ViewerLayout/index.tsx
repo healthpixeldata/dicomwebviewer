@@ -640,6 +640,14 @@ if (!viewportComponents || viewportComponents.length === 0) {
             )}
           </div>
 
+          {/* Innowave: overlay on/off, since the header is hidden in landscape */}
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent('innowave:toggle-overlays'))}
+            className="fixed right-2 top-2 z-50 rounded bg-black/50 px-2 py-1 text-[11px] text-white/80"
+          >
+            Overlay
+          </button>
         </div>
       );
     }

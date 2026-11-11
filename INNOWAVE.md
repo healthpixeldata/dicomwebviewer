@@ -16,3 +16,6 @@ All options go in `platform/app/public/config/default.js` (or your deployed `app
 - Serve dcm4chee behind a reverse proxy with **HTTP/2** (HTTP/1.1 caps ~6 parallel requests per host).
 - Compressed JPEG2000/JPEG-LS decode in JS is the usual bottleneck; test `requestTransferSyntaxUID` or store studies uncompressed/lossless-JPEG.
 - Ensure gzip is off for pixel data (already compressed) and the proxy does not buffer responses.
+
+## Overlay on/off
+Header settings (gear) → **Show / hide overlay**. Works on every screen size; on phones in landscape use the small **Overlay** button (top-right). The choice is remembered per browser.

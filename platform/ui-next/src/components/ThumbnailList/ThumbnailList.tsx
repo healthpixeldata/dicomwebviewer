@@ -36,7 +36,7 @@ const ThumbnailList = ({
             <div
               key={displaySetInstanceUID}
               className="flex-shrink-0"
-              style={{ zoom: 0.8 }}
+              style={{ zoom: 0.62 }}
             >
               <Thumbnail
                 {...rest}

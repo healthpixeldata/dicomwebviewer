@@ -80,6 +80,13 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
     },
   ];
 
+  // Innowave: show/hide on-image overlays (works on every screen size).
+  menuOptions.unshift({
+    title: 'Show / hide overlay',
+    icon: undefined,
+    onClick: () => window.dispatchEvent(new CustomEvent('innowave:toggle-overlays')),
+  });
+
   if (AppearanceModal) {
     menuOptions.splice(1, 0, {
       title: AppearanceModal.menuTitle ?? t('Header:Appearance'),

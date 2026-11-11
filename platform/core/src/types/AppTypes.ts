@@ -211,6 +211,8 @@ declare global {
       maxCacheSize?: number;
       /** Innowave: false = show only the opened study (no prior studies of the same patient). Default true. */
       loadPriorStudies?: boolean;
+      /** Show synthetic PET/CT "Fusion" thumbnails in the series list (default true). */
+      fusionThumbnails?: boolean;
       /** Innowave: 'reload' (default) restores the page after a WebGL context failure; 'off' disables it. */
       webglRecovery?: 'reload' | 'off';
       /** Innowave: configurable patient/study text on the viewport overlay (see viewportOverlayCustomization). */

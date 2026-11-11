@@ -25,6 +25,7 @@ import { CallbackCustomization } from 'platform/core/src/types';
 import { type TabsProps } from '@ohif/core/src/utils/createStudyBrowserTabs';
 import { thumbnailNoImageModalities } from '@ohif/core/src/utils/thumbnailNoImageModalities';
 import { resolveThumbnailDetails } from './resolveThumbnailDetails';
+import { appendFusionThumbnails, openFusion } from './ptCtFusion';
 
 const { sortStudyInstances, formatDate, formatTime, createStudyBrowserTabs } = utils;
 
@@ -128,6 +129,9 @@ function PanelStudyBrowser({
 
   const onDoubleClickThumbnailHandler = useCallback(
     async displaySetInstanceUID => {
+      if (openFusion(displaySetInstanceUID, { servicesManager, commandsManager })) {
+        return;
+      }
       const customHandler = customizationService.getCustomization(
         'studyBrowser.thumbnailDoubleClickCallback'
       ) as CallbackCustomization;
@@ -395,7 +399,12 @@ function PanelStudyBrowser({
     mapDisplaySetsWithState,
   ]);
 
-  const tabs = createStudyBrowserTabs(StudyInstanceUIDs, studyDisplayList, displaySets);
+  const baseTabs = createStudyBrowserTabs(StudyInstanceUIDs, studyDisplayList, displaySets);
+  // Innowave: synthetic "Fusion" thumbnails for PT+CT pairs (disable: fusionThumbnails: false)
+  const tabs =
+    extensionManager.appConfig?.fusionThumbnails === false
+      ? baseTabs
+      : appendFusionThumbnails(baseTabs, displaySetService);
 
   // TODO: Should not fire this on "close"
   function _handleStudyClick(StudyInstanceUID) {
